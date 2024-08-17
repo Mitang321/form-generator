@@ -32,7 +32,11 @@ function App() {
           <FormEditor addField={addField} />
         </div>
         <div className="col-md-8">
-          <FormPreview fields={fields} updateField={updateField} />
+          <FormPreview
+            fields={fields}
+            updateField={updateField}
+            setFields={setFields}
+          />
         </div>
       </div>
     </div>
