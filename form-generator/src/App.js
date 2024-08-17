@@ -11,8 +11,18 @@ function App() {
       id: Date.now(),
       type,
       label: `Field ${fields.length + 1}`,
+      placeholder: "",
+      required: false,
     };
     setFields([...fields, newField]);
+  };
+
+  const updateField = (updatedField) => {
+    setFields(
+      fields.map((field) =>
+        field.id === updatedField.id ? updatedField : field
+      )
+    );
   };
 
   return (
@@ -22,7 +32,7 @@ function App() {
           <FormEditor addField={addField} />
         </div>
         <div className="col-md-8">
-          <FormPreview fields={fields} />
+          <FormPreview fields={fields} updateField={updateField} />
         </div>
       </div>
     </div>
