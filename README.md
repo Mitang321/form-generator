@@ -2,12 +2,7 @@
 
 A React-based form generator application that allows users to create and edit forms. The forms can be previewed and managed easily.
 
-## Features
 
-- **Create and Edit Forms**: Add and modify form fields using a user-friendly interface.
-- **Reorder and Delete Fields**: Drag and drop fields to reorder or delete them.
-- **Field Customization**: Customize field labels and types.
-- **Preview Forms**: View a live preview of the form as it is being edited.
 
 ##Screenshots
 
