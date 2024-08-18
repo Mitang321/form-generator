@@ -1,39 +1,38 @@
 import React from "react";
 import { useDragLayer } from "react-dnd";
+import { ItemTypes } from "./ItemTypes";
+import { Card } from "react-bootstrap";
+
+const getItemStyles = (currentOffset) => {
+  if (!currentOffset) {
+    return {
+      display: "none",
+    };
+  }
+
+  const { x, y } = currentOffset;
+  return {
+    transform: `translate(${x}px, ${y}px)`,
+    pointerEvents: "none",
+  };
+};
 
 function FieldDragLayer() {
-  const { isDragging, itemType, item, clientOffset } = useDragLayer(
-    (monitor) => ({
-      isDragging: monitor.isDragging(),
-      itemType: monitor.getItemType(),
-      item: monitor.getItem(),
-      clientOffset: monitor.getClientOffset(),
-    })
-  );
+  const { itemType, isDragging, currentOffset } = useDragLayer((monitor) => ({
+    itemType: monitor.getItemType(),
+    isDragging: monitor.isDragging(),
+    currentOffset: monitor.getSourceClientOffset(),
+  }));
 
-  if (!isDragging) {
+  if (!isDragging || itemType !== ItemTypes.FIELD) {
     return null;
   }
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        pointerEvents: "none",
-        zIndex: 100,
-        left: clientOffset.x,
-        top: clientOffset.y,
-      }}
-    >
-      <div
-        style={{
-          padding: "8px",
-          backgroundColor: "white",
-          border: "1px solid black",
-        }}
-      >
-        {item.label}
-      </div>
+    <div style={{ position: "fixed", pointerEvents: "none", zIndex: 100 }}>
+      <Card style={getItemStyles(currentOffset)}>
+        <Card.Body>Dragging...</Card.Body>
+      </Card>
     </div>
   );
 }

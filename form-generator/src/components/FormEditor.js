@@ -1,65 +1,58 @@
 import React, { useState } from "react";
-import { Button, Form, Modal, ListGroup } from "react-bootstrap";
-import FieldEditorModal from "./FieldEditorModal";
+import { Button, Form, Modal } from "react-bootstrap";
 import Field from "./Field";
+import FieldEditorModal from "./FieldEditorModal";
+import FieldCustomization from "./FieldCustomization";
 
-function FormEditor({ onFieldsChange }) {
+function FormEditor() {
   const [fields, setFields] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [editIndex, setEditIndex] = useState(null);
+  const [showEditorModal, setShowEditorModal] = useState(false);
+  const [selectedField, setSelectedField] = useState(null);
 
   const handleAddField = () => {
-    setEditIndex(null);
-    setShowModal(true);
+    setSelectedField(null);
+    setShowEditorModal(true);
   };
 
-  const handleEditField = (index) => {
-    setEditIndex(index);
-    setShowModal(true);
+  const handleEditField = (field) => {
+    setSelectedField(field);
+    setShowEditorModal(true);
   };
 
-  const handleDeleteField = (index) => {
-    const newFields = fields.filter((_, i) => i !== index);
-    setFields(newFields);
-    onFieldsChange(newFields);
+  const handleDeleteField = (field) => {
+    setFields(fields.filter((f) => f !== field));
   };
 
-  const handleFieldChange = (updatedField, index) => {
-    const newFields = [...fields];
-    newFields[index] = updatedField;
-    setFields(newFields);
-    onFieldsChange(newFields);
+  const handleSaveField = (newField) => {
+    if (selectedField) {
+      setFields(fields.map((f) => (f === selectedField ? newField : f)));
+    } else {
+      setFields([...fields, newField]);
+    }
+    setShowEditorModal(false);
   };
 
   return (
-    <div className="form-editor">
-      <Button variant="primary" onClick={handleAddField} className="mb-3">
+    <div>
+      <h2 className="mb-4">Form Editor</h2>
+      <Button variant="primary" onClick={handleAddField} className="mb-4">
         Add Field
       </Button>
-      <ListGroup>
+      <div>
         {fields.map((field, index) => (
-          <ListGroup.Item key={index}>
-            <Field
-              field={field}
-              onEdit={() => handleEditField(index)}
-              onDelete={() => handleDeleteField(index)}
-            />
-          </ListGroup.Item>
+          <Field
+            key={index}
+            field={field}
+            onEdit={() => handleEditField(field)}
+            onDelete={() => handleDeleteField(field)}
+          />
         ))}
-      </ListGroup>
+      </div>
       <FieldEditorModal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        field={editIndex !== null ? fields[editIndex] : null}
-        onSave={(field) => {
-          if (editIndex !== null) {
-            handleFieldChange(field, editIndex);
-          } else {
-            setFields([...fields, field]);
-            onFieldsChange([...fields, field]);
-          }
-          setShowModal(false);
-        }}
+        show={showEditorModal}
+        field={selectedField}
+        onHide={() => setShowEditorModal(false)}
+        onSave={handleSaveField}
       />
     </div>
   );
