@@ -1,89 +1,66 @@
 import React, { useState } from "react";
-import { useDrop } from "react-dnd";
-import Field from "./Field";
+import { Button, Form, Modal, ListGroup } from "react-bootstrap";
 import FieldEditorModal from "./FieldEditorModal";
-import FieldDragLayer from "./FieldDragLayer";
-import { ItemTypes } from "./ItemTypes";
-function FormEditor() {
+import Field from "./Field";
+
+function FormEditor({ onFieldsChange }) {
   const [fields, setFields] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [currentField, setCurrentField] = useState(null);
-
-  const [{ isOver }, drop] = useDrop({
-    accept: ItemTypes.FIELD,
-    drop: (item) => moveField(item.index),
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
-  });
-
-  const moveField = (index) => {
-    const field = fields[index];
-    const updatedFields = fields.filter((_, i) => i !== index);
-    setFields([field, ...updatedFields]);
-  };
+  const [editIndex, setEditIndex] = useState(null);
 
   const handleAddField = () => {
-    const newField = { label: "", type: "text", required: false };
-    setCurrentField(newField);
+    setEditIndex(null);
     setShowModal(true);
-  };
-
-  const handleSaveField = (field) => {
-    setFields([...fields, field]);
-    setShowModal(false);
   };
 
   const handleEditField = (index) => {
-    setCurrentField({ ...fields[index], index });
+    setEditIndex(index);
     setShowModal(true);
   };
 
-  const handleUpdateField = (field) => {
-    const updatedFields = [...fields];
-    updatedFields[field.index] = field;
-    setFields(updatedFields);
-    setShowModal(false);
+  const handleDeleteField = (index) => {
+    const newFields = fields.filter((_, i) => i !== index);
+    setFields(newFields);
+    onFieldsChange(newFields);
   };
 
-  const handleDeleteField = (index) => {
-    setFields(fields.filter((_, i) => i !== index));
+  const handleFieldChange = (updatedField, index) => {
+    const newFields = [...fields];
+    newFields[index] = updatedField;
+    setFields(newFields);
+    onFieldsChange(newFields);
   };
 
   return (
-    <div
-      ref={drop}
-      style={{
-        minHeight: "400px",
-        border: isOver ? "2px solid green" : "2px dashed gray",
-      }}
-    >
-      <button className="btn btn-primary mb-3" onClick={handleAddField}>
+    <div className="form-editor">
+      <Button variant="primary" onClick={handleAddField} className="mb-3">
         Add Field
-      </button>
-      <div className="field-list">
+      </Button>
+      <ListGroup>
         {fields.map((field, index) => (
-          <Field
-            key={index}
-            index={index}
-            field={field}
-            onEdit={() => handleEditField(index)}
-            onDelete={() => handleDeleteField(index)}
-          />
+          <ListGroup.Item key={index}>
+            <Field
+              field={field}
+              onEdit={() => handleEditField(index)}
+              onDelete={() => handleDeleteField(index)}
+            />
+          </ListGroup.Item>
         ))}
-      </div>
-      {showModal && (
-        <FieldEditorModal
-          field={currentField}
-          onSave={
-            currentField.index !== undefined
-              ? handleUpdateField
-              : handleSaveField
+      </ListGroup>
+      <FieldEditorModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        field={editIndex !== null ? fields[editIndex] : null}
+        onSave={(field) => {
+          if (editIndex !== null) {
+            handleFieldChange(field, editIndex);
+          } else {
+            setFields([...fields, field]);
+            onFieldsChange([...fields, field]);
           }
-          onClose={() => setShowModal(false)}
-        />
-      )}
-      <FieldDragLayer />
+          setShowModal(false);
+        }}
+      />
     </div>
   );
 }

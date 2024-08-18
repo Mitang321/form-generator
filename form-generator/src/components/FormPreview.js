@@ -1,12 +1,16 @@
 import React from "react";
+import { Button } from "react-bootstrap";
 
 function FormPreview({ fields = [] }) {
   return (
-    <form>
+    <form className="form-preview">
       {fields.map((field, index) => (
         <div key={index} className="mb-3">
-          <label>{field.label}</label>
+          <label htmlFor={`field-${index}`} className="form-label">
+            {field.label}
+          </label>
           <input
+            id={`field-${index}`}
             type={field.type}
             required={field.required}
             minLength={field.minLength || undefined}
@@ -17,9 +21,9 @@ function FormPreview({ fields = [] }) {
           />
         </div>
       ))}
-      <button type="submit" className="btn btn-success">
+      <Button type="submit" variant="success">
         Submit
-      </button>
+      </Button>
     </form>
   );
 }

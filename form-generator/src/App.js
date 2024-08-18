@@ -12,7 +12,7 @@ function App() {
 
   return (
     <Container>
-      <Row>
+      <Row className="my-4">
         <Col md={6}>
           <h2>Form Editor</h2>
           <FormEditor onFieldsChange={updateFields} />
