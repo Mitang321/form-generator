@@ -1,5 +1,10 @@
 # Form Generator
 
+## Live Preview
+
+[Live Preview](https://form-generator-seven.vercel.app/)
+
+
 A React-based form generator application that allows users to create and edit forms. The forms can be previewed and managed easily.
 
 
